@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Helwan AI Gate</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Cairo', sans-serif;
+    }
+    header {
+      background: linear-gradient(#443355, #221122);
+      padding: 1em;
+      text-align: center;
+      color: gold;
+      font-size: 1.5em;
+    }
+    #container {
+      display: flex;
+      height: 100%;
+    }
+    #sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    #content {
+      flex: 1;
+      background: #ecf0f1;
+      display: flex;
+      flex-direction: column;
+    }
+    webview {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    select, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      font-size: 1em;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <header>Helwan Gate</header>
+  <div id="container">
+    <div id="sidebar">
+      <select id="siteSelector">
+        <option value="https://chat.openai.com">ChatGPT</option>
+        <option value="https://bard.google.com">Google Gemini</option>
+        <option value="https://copilot.microsoft.com">Copilot</option>
+        <option value="https://claude.ai">Claude</option>
+        <option value="https://www.perplexity.ai">Perplexity AI</option>
+        <option value="https://poe.com">Poe (Quora)</option>
+        <option value="https://huggingface.co/chat">HuggingChat</option>
+        <option value="https://pi.ai">Pi (Inflection)</option>
+        <option value="https://you.com/chat">You Chat</option>
+        <option value="https://leonardo.ai">Leonardo AI</option>
+        <option value="https://discord.com/invite/midjourney">Midjourney (Discord)</option>
+        <option value="https://openai.com/dall-e">DALL·E 3</option>
+        <option value="https://runwayml.com">Runway ML</option>
+        <option value="https://pika.art">Pika Labs</option>
+        <option value="https://openai.com/sora">Sora (OpenAI)</option>
+        <option value="https://elevenlabs.io">ElevenLabs</option>
+        <option value="https://www.heygen.com">HeyGen</option>
+      </select>
+      <button onclick="loadSite()">فتح الموقع</button>
+    </div>
+    <div id="content">
+      <webview id="siteFrame" src="https://chat.openai.com" allowpopups></webview>
+    </div>
+  </div>
+
+  <script>
+    const webview = document.getElementById("siteFrame");
+
+    function loadSite() {
+      const select = document.getElementById("siteSelector");
+      const url = select.value;
+      webview.src = url;
+    }
+
+    webview.addEventListener('did-fail-load', (e) => {
+      if (e.errorCode === -3 || e.errorDescription.includes('ERR_ABORTED')) {
+        const message = `
+          <html><body style="font-family: sans-serif; text-align: center; padding: 2em;">
+          <h2>🚫 تعذر عرض الموقع داخل التطبيق</h2>
+          <p>هذا الموقع يمنع تحميله داخل التطبيقات (Electron).</p>
+          <p>يرجى فتحه خارجيًا لو احتجت ذلك.</p>
+          </body></html>
+        `;
+        webview.loadURL('data:text/html,' + encodeURIComponent(message));
+      }
+    });
+  </script>
+</body>
+</html>
+
