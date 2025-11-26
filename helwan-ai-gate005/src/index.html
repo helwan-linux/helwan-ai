@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Helwan AI Gate</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Cairo', sans-serif;
+      background-color: #221122;
+    }
+    header {
+      background: linear-gradient(#443355, #221122);
+      padding: 1em;
+      color: gold;
+      font-size: 1.5em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between; 
+      gap: 10px;
+    }
+    #header-center-content { 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-grow: 1;
+    }
+    #header-icon {
+      height: 40px;
+      border-radius: 5px;
+    }
+    
+    #nav-buttons-container {
+        display: flex;
+        gap: 5px;
+        margin-left: 1em;
+    }
+    .nav-button {
+        background: #556677;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.2em;
+        transition: background-color 0.2s;
+    }
+    .nav-button.reload-btn { 
+        padding: 8px 10px;
+        font-size: 1.1em;
+    }
+    .nav-button:hover:not(:disabled) {
+        background: #667788;
+    }
+    .nav-button:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+    
+    #container {
+      display: flex;
+      height: 100%;
+    }
+    #sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .site-button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      font-size: 1em;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      text-align: left;
+    }
+    .site-button:hover {
+      background: #2980b9;
+    }
+    
+    .site-button div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    .site-button span {
+        flex-grow: 1; 
+        text-align: left;
+    }
+    .delete-site-btn {
+        cursor: pointer;
+        color: #8B4513; /* ✅ اللون البني الخشبي الجديد */
+        font-weight: bold;
+        margin-left: 10px;
+        padding: 2px 5px;
+        border-radius: 3px;
+        transition: background-color 0.2s;
+        font-size: 0.8em; 
+    }
+    .delete-site-btn:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    #content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #ecf0f1;
+      position: relative; 
+    }
+    #tabs-container {
+        display: none;
+        overflow-x: auto;
+        background-color: #334455;
+        padding-top: 5px;
+    }
+    .tab {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        cursor: pointer;
+        background-color: #445566;
+        color: #ddd;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        margin-right: 2px;
+        transition: background-color 0.3s;
+        white-space: nowrap;
+        position: relative;
+    }
+    .tab:hover {
+        background-color: #556677;
+    }
+    .tab.active {
+        background-color: #ecf0f1;
+        color: #2c3e50;
+    }
+    .tab-close {
+        margin-left: 10px;
+        font-weight: bold;
+        color: #ddd;
+        font-size: 1.2em;
+    }
+    .tab.active .tab-close {
+        color: #2c3e50;
+    }
+    webview {
+      flex: 1;
+      width: 100%;
+      height: 100% !important; 
+      border: none;
+      display: none; 
+      min-height: 0; 
+      box-sizing: border-box; 
+      position: relative; 
+    }
+    webview.active {
+      display: flex; 
+    }
+
+    #welcome-page {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #333;
+        font-size: 1.2em;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    #add-site-form-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #ecf0f1;
+      padding: 2em;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 100;
+      display: none;
+    }
+    #add-site-form-container input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    #add-site-form-container button {
+        background: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    #add-site-form-container button:hover {
+        background: #2980b9;
+    }
+    .add-site-button {
+      background-color: #e74c3c;
+      margin-top: 1rem;
+    }
+    .add-site-button:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    
+    <div id="nav-buttons-container">
+        <button id="back-button" class="nav-button" disabled>&#9664;</button> 
+        <button id="forward-button" class="nav-button" disabled>&#9654;</button>
+        <button id="reload-button" class="nav-button reload-btn" disabled>&#x21BB;</button> 
+    </div>
+    
+    <div id="header-center-content">
+        <img id="header-icon" src="ai.png" alt="AI Icon">
+        Helwan AI Gate
+    </div>
+    
+    <div></div> 
+  </header>
+  <div id="container">
+    <div id="sidebar">
+      <div id="site-buttons-container"></div>
+      <button class="site-button add-site-button" onclick="showAddSiteForm()">+ Add New Site</button>
+    </div>
+    <div id="content">
+      <div id="tabs-container"></div>
+      <div id="welcome-page">
+          <h1>Welcome to Helwan AI Gate</h1>
+          <p>Please select a site from the sidebar or add a new one to start.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="add-site-form-container">
+    <h2>Add New Site</h2>
+    <form id="add-site-form">
+      <input type="text" id="site-name-input" placeholder="Site Name (English Only)" required>
+      <input type="url" id="site-url-input" placeholder="https://example.com" required>
+      <button type="submit">Add Site</button>
+      <button type="button" onclick="hideAddSiteForm()">Cancel</button>
+    </form>
+  </div>
+  
+  <script src="./renderer.js"></script>
+</body>
+</html>
