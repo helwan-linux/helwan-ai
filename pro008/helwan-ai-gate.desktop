@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Helwan AI Gate
+Comment=Your smart gateway to the world of Artificial Intelligence
+Exec=helwan-ai-gate
+Icon=helwan-ai-gate
+Terminal=false
+Type=Application
+Categories=Utility;AI;
+
