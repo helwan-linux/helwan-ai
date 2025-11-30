@@ -1,0 +1,42 @@
+[
+  {
+    "name": "ChatGPT",
+    "url": "https://chat.openai.com"
+  },
+  {
+    "name": "Claude",
+    "url": "https://claude.ai"
+  },
+  {
+    "name": "Copilot",
+    "url": "https://copilot.microsoft.com"
+  },
+  {
+    "name": "ElevenLabs",
+    "url": "https://elevenlabs.io"
+  },
+  {
+    "name": "Google Gemini",
+    "url": "https://bard.google.com"
+  },
+  {
+    "name": "HeyGen",
+    "url": "https://www.heygen.com"
+  },
+  {
+    "name": "Leonardo AI",
+    "url": "https://leonardo.ai"
+  },
+  {
+    "name": "Midjourney",
+    "url": "https://discord.com/invite/midjourney"
+  },
+  {
+    "name": "Perplexity AI",
+    "url": "https://www.perplexity.ai"
+  },
+  {
+    "name": "Poe (Quora)",
+    "url": "https://poe.com"
+  }
+]
