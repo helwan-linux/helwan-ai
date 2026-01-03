@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Helwan AI Gate</title>
   <style>
+    /* ====== Base styles (كما هي، مع إضافة بسيطة للأدوات) ====== */
     body, html {
       margin: 0;
       padding: 0;
@@ -16,29 +17,102 @@
     header {
       background: linear-gradient(#443355, #221122);
       padding: 1em;
-      text-align: center;
       color: gold;
       font-size: 1.5em;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       gap: 10px;
+    }
+    #header-center-content {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-grow: 1;
+      gap: 15px;
     }
     #header-icon {
       height: 40px;
       border-radius: 5px;
     }
+    #nav-buttons-container {
+      display: flex;
+      gap: 5px;
+      margin-left: 1em;
+    }
+    .nav-button {
+      background: #556677;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2em;
+      transition: background-color 0.2s;
+    }
+    .nav-button.reload-btn {
+      padding: 8px 10px;
+      font-size: 1.1em;
+    }
+    .nav-button:hover:not(:disabled) { background: #667788; }
+    .nav-button:disabled { opacity: 0.4; cursor: default; }
+
+    #url-bar {
+      flex-grow: 1;
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: 1px solid #778899;
+      background-color: #f0f0f0;
+      font-size: 1em;
+      height: 30px;
+      box-sizing: border-box;
+    }
+
+    /* header tools */
+    #header-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 10px;
+    }
+    #clock-display {
+      color: gold;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+    #notepad-btn {
+      background: #e67e22;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* layout */
     #container {
       display: flex;
-      height: 100%;
+      height: calc(100vh - 66px);
+      width: 100%;
     }
     #sidebar {
       width: 250px;
       background-color: #2c3e50;
       color: white;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    #site-buttons-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
       padding: 1rem;
       overflow-y: auto;
     }
+    #site-buttons-container { flex-grow: 1; }
+
     .site-button {
       width: 100%;
       padding: 0.75rem;
@@ -50,128 +124,173 @@
       color: white;
       cursor: pointer;
       text-align: left;
+      flex-shrink: 0;
     }
-    .site-button:hover {
-      background: #2980b9;
+    .site-button:hover { background: #2980b9; }
+    .site-button div { display:flex; justify-content:space-between; align-items:center; width:100%; }
+    .site-button span { flex-grow:1; text-align:left; }
+
+    .delete-site-btn {
+      cursor:pointer;
+      color:#8B4513;
+      font-weight:bold;
+      margin-left:10px;
+      padding:2px 5px;
+      border-radius:3px;
+      transition:background-color 0.2s;
+      font-size:0.8em;
     }
+    .delete-site-btn:hover { background-color: rgba(255,255,255,0.2); }
+
     #content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #ecf0f1;
-      position: relative;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      background:#ecf0f1;
+      position:relative;
+      overflow:hidden;
     }
+
     #tabs-container {
-        display: none;
-        overflow-x: auto;
-        background-color: #334455;
-        padding-top: 5px;
+      display:none;
+      overflow-x:auto;
+      white-space:nowrap;
+      background-color:#334455;
+      padding-top:5px;
+      flex-shrink:0;
+      border-bottom:1px solid #554466;
     }
     .tab {
-        display: flex;
-        align-items: center;
-        padding: 10px 15px;
-        cursor: pointer;
-        background-color: #445566;
-        color: #ddd;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-        margin-right: 2px;
-        transition: background-color 0.3s;
-        white-space: nowrap;
-        position: relative;
+      display:inline-flex;
+      align-items:center;
+      padding:10px 15px;
+      cursor:pointer;
+      background-color:#445566;
+      color:#ddd;
+      border-top-left-radius:8px;
+      border-top-right-radius:8px;
+      margin-right:2px;
+      transition: background-color 0.3s;
+      white-space:nowrap;
+      position:relative;
     }
-    .tab:hover {
-        background-color: #556677;
+    .tab:hover { background-color:#556677; }
+    .tab.active { background-color:#ecf0f1; color:#2c3e50; }
+    .tab-close { margin-left:10px; font-weight:bold; color:#ddd; font-size:1.2em; }
+    .tab.active .tab-close { color:#2c3e50; }
+
+    webview, #welcome-page {
+      flex:1;
+      width:100%;
+      height:100% !important;
+      border:none;
+      display:none;
+      min-height:0;
+      box-sizing:border-box;
+      position:relative;
     }
-    .tab.active {
-        background-color: #ecf0f1;
-        color: #2c3e50;
-    }
-    .tab-close {
-        margin-left: 10px;
-        font-weight: bold;
-        color: #ddd;
-        font-size: 1.2em;
-    }
-    .tab.active .tab-close {
-        color: #2c3e50;
-    }
-    webview {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: none;
-    }
-    webview.active {
-      display: flex;
-    }
+    webview.active, #welcome-page { display:flex; }
+
     #welcome-page {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        color: #2c3e50;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      color:#333;
+      font-size:1.2em;
+      text-align:center;
+      padding:20px;
     }
-    #welcome-page h1 {
-        font-size: 2.5em;
-    }
+
     #add-site-form-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #ecf0f1;
-      padding: 2em;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      z-index: 100;
-      display: none;
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      background-color:#ecf0f1;
+      padding:2em;
+      border-radius:10px;
+      box-shadow:0 4px 8px rgba(0,0,0,0.2);
+      z-index:100;
+      display:none;
     }
     #add-site-form-container input {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+      width:100%;
+      padding:10px;
+      margin-bottom:15px;
+      border:1px solid #ccc;
+      border-radius:5px;
     }
     #add-site-form-container button {
-        background: #3498db;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+      background:#3498db;
+      color:white;
+      padding:10px 20px;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
     }
-    #add-site-form-container button:hover {
-        background: #2980b9;
-    }
+    #add-site-form-container button:hover { background:#2980b9; }
     .add-site-button {
-      background-color: #e74c3c;
-      margin-top: 1rem;
+      background-color:#e74c3c;
+      margin-top:1rem;
     }
-    .add-site-button:hover {
-      background-color: #c0392b;
+    .add-site-button:hover { background-color:#c0392b; }
+
+    /* Notepad */
+    #notepad-container {
+      position:absolute;
+      top:60px;
+      right:10px;
+      width:320px;
+      height:420px;
+      background:#ecf0f1;
+      border-radius:10px;
+      padding:10px;
+      display:none;
+      flex-direction:column;
+      z-index:200;
+      box-shadow:0 6px 18px rgba(0,0,0,0.25);
     }
+    #notepad-text { flex:1; width:100%; resize:none; padding:8px; box-sizing:border-box; border-radius:6px; border:1px solid #ccc; }
+    #notepad-actions { display:flex; gap:8px; margin-top:8px; justify-content:flex-end; }
+    #notepad-actions button { padding:6px 10px; border-radius:6px; border:none; cursor:pointer; background:#3498db; color:white; }
   </style>
 </head>
 <body>
   <header>
-    
+    <div id="nav-buttons-container">
+      <button id="back-button" class="nav-button" disabled>&#9664;</button>
+      <button id="forward-button" class="nav-button" disabled>&#9654;</button>
+      <button id="reload-button" class="nav-button reload-btn" disabled>&#x21BB;</button>
+    </div>
+
+    <div id="header-center-content">
+      <img id="header-icon" src="ai.png" alt="AI Icon">
+      Helwan AI Gate
+      <input type="text" id="url-bar" placeholder="Enter URL or command and Hit Enter...">
+      <div id="header-tools">
+        <span id="clock-display">--:--:--</span>
+        <button id="notepad-btn">📝 Notepad</button>
+      </div>
+    </div>
+
+    <div></div>
   </header>
+
   <div id="container">
     <div id="sidebar">
-      <div id="site-buttons-container"></div>
-      <button class="site-button add-site-button" onclick="showAddSiteForm()">+ Add New Site</button>
+      <div id="site-buttons-wrapper">
+        <div id="site-buttons-container"></div>
+        <button class="site-button add-site-button" onclick="showAddSiteForm()">+ Add New Site</button>
+      </div>
     </div>
+
     <div id="content">
       <div id="tabs-container"></div>
       <div id="welcome-page">
-          <h1>Welcome to Helwan AI Gate</h1>
-          <p>Please select a site from the sidebar to start.</p>
+        <h1>Welcome to Helwan AI Gate</h1>
+        <p>Please select a site from the sidebar or add a new one to start.</p>
       </div>
     </div>
   </div>
@@ -179,13 +298,494 @@
   <div id="add-site-form-container">
     <h2>Add New Site</h2>
     <form id="add-site-form">
-      <input type="text" id="site-name-input" placeholder="Site Name" required>
+      <input type="text" id="site-name-input" placeholder="Site Name (English Only)" required>
       <input type="url" id="site-url-input" placeholder="https://example.com" required>
       <button type="submit">Add Site</button>
       <button type="button" onclick="hideAddSiteForm()">Cancel</button>
     </form>
   </div>
-  
-  <script src="./renderer.js"></script>
+
+  <div id="notepad-container" aria-hidden="true">
+    <textarea id="notepad-text" placeholder="Write your notes here..."></textarea>
+    <div id="notepad-actions">
+      <button id="notepad-close-btn">Close</button>
+      <button id="notepad-clear-btn">Clear</button>
+    </div>
+  </div>
+
+  <!-- ======= Inline renderer.js (المصحح والمكمل) ======= -->
+  <script>
+  // renderer.js integrated (final, مصحح، ومستكمل)
+  console.log('--- ✅ Multi-tab renderer active (integrated) ---');
+
+  // Tabs state
+  let tabs = {};
+  let activeTabId = null;
+
+  // DOM refs
+  const backButton = document.getElementById('back-button');
+  const forwardButton = document.getElementById('forward-button');
+  const reloadButton = document.getElementById('reload-button');
+  const urlBar = document.getElementById('url-bar');
+
+  // Utility DOM getter
+  function $id(id) { return document.getElementById(id); }
+
+  // Request sites from main (preload exposes electronAPI)
+  function loadSites() {
+    if (window && window.electronAPI && typeof window.electronAPI.getSites === 'function') {
+      window.electronAPI.getSites();
+    } else {
+      console.warn('electronAPI.getSites not available');
+    }
+  }
+
+  // Update nav buttons state based on webview history
+  function updateNavButtons(webview) {
+    if (!backButton || !forwardButton || !reloadButton) return;
+    if (webview) {
+      try {
+        backButton.disabled = !webview.canGoBack();
+        forwardButton.disabled = !webview.canGoForward();
+        reloadButton.disabled = false;
+      } catch (e) {
+        backButton.disabled = true;
+        forwardButton.disabled = true;
+        reloadButton.disabled = false;
+      }
+    } else {
+      backButton.disabled = true;
+      forwardButton.disabled = true;
+      reloadButton.disabled = true;
+    }
+  }
+
+  function updateUrlBar(url) {
+    if (!urlBar) return;
+    try { urlBar.value = url || ''; } catch (e) {}
+  }
+
+  // Render sites list in sidebar
+  function renderSites(data) {
+    const container = $id('site-buttons-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const sortedData = Array.isArray(data) ? data.slice().sort((a,b)=> (a.name||'').localeCompare(b.name||'','en')) : [];
+
+    sortedData.forEach(site => {
+      const button = document.createElement('button');
+      button.className = 'site-button';
+
+      const content = document.createElement('div');
+      content.style.display='flex'; content.style.justifyContent='space-between'; content.style.alignItems='center'; content.style.width='100%';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.innerText = site.name || site.url || 'Untitled';
+      nameSpan.style.cursor = 'pointer';
+      nameSpan.onclick = () => createTab(site.url, `${site.name}-${Date.now()}`, site.name);
+
+      const deleteBtn = document.createElement('span');
+      deleteBtn.className = 'delete-site-btn';
+      deleteBtn.innerText = '🗑';
+      deleteBtn.title = `Delete ${site.name || site.url || 'site'}`;
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (confirm(`Are you sure you want to delete the site "${site.name}"?`)) {
+          if (window && window.electronAPI && typeof window.electronAPI.deleteSite === 'function') {
+            window.electronAPI.deleteSite(site.name);
+          }
+        }
+      };
+
+      content.appendChild(nameSpan);
+      content.appendChild(deleteBtn);
+      button.appendChild(content);
+      container.appendChild(button);
+    });
+  }
+
+  // Inject CSS fixes for Gemini/Bard when needed
+  function injectGeminiFix(webviewElement) {
+    if (!webviewElement || typeof webviewElement.executeJavaScript !== 'function') return;
+    const injectionCode = `
+      (function() {
+        try {
+          if (!document.getElementById('__helwan_gemini_fix')) {
+            const style = document.createElement('style');
+            style.id = '__helwan_gemini_fix';
+            style.textContent = \`
+              html, body, div[data-testid="scrolling-container"] {
+                overflow: auto !important;
+                overflow-x: hidden !important;
+              }
+              div[role="main"] > div:last-child,
+              div[role="contentinfo"],
+              [role="banner"],
+              div[data-testid="bottom-rail"] {
+                position: static !important;
+                z-index: 1 !important;
+              }
+              div[role="main"] { padding-bottom: 400px !important; }
+            \`;
+            document.head && document.head.appendChild(style);
+            console.log('Helwan: Gemini fix injected');
+          }
+        } catch(e) { console.error('Helwan: Gemini fix failed', e); }
+      })();
+    `;
+    webviewElement.executeJavaScript(injectionCode).catch(err => console.error('Failed to inject Gemini fix:', err));
+  }
+
+  // Escape HTML helper for labels
+  function escapeHtml(text) {
+    const map = { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' };
+    return String(text).replace(/[&<>"']/g, m => map[m]);
+  }
+
+  // Smart command parser (الميزة رقم 1) — يحول النص إلى URL/بحث/أوامر
+  function smartCommand(input) {
+    if (!input || typeof input !== 'string') return '';
+    const raw = input.trim();
+    const text = raw.toLowerCase();
+
+    // 1) direct full URL
+    if (text.startsWith('http://') || text.startsWith('https://')) return raw;
+
+    // 2) looks like domain (has dot, no spaces) -> add https
+    if (text.includes('.') && !text.includes(' ')) return 'https://' + raw;
+
+    // 3) known quick keywords -> open site
+    const keywords = {
+      'youtube':'https://www.youtube.com',
+      'yt':'https://www.youtube.com',
+      'facebook':'https://www.facebook.com',
+      'fb':'https://www.facebook.com',
+      'gmail':'https://mail.google.com',
+      'maps':'https://maps.google.com',
+      'twitter':'https://twitter.com',
+      'x':'https://twitter.com',
+      'whatsapp':'https://web.whatsapp.com',
+      'github':'https://github.com',
+      'reddit':'https://www.reddit.com'
+    };
+    for (const k in keywords) if (text.includes(k)) return keywords[k];
+
+    // 4) play / شغل -> youtube search
+    if (text.startsWith('play ') || text.startsWith('شغل ')) {
+      const q = raw.replace(/^play\s+/i, '').replace(/^شغل\s+/i, '');
+      return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+    }
+
+    // 5) basic commands (open new tab / close tab / clear tabs) -- lightweight parsing
+    if (text === 'open new tab' || text === 'افتح تبويب' || text === 'فتح تبويب' || text === 'new tab') {
+      return '__COMMAND__NEW_TAB';
+    }
+    if (text === 'close tab' || text === 'اغلق التبويب' || text === 'اغلق تاب') {
+      return '__COMMAND__CLOSE_TAB';
+    }
+    if (text === 'clear tabs' || text === 'اغلق الكل' || text === 'close all tabs') {
+      return '__COMMAND__CLOSE_ALL';
+    }
+
+    // 6) default -> google search
+    return 'https://www.google.com/search?q=' + encodeURIComponent(raw);
+  }
+
+  // Create a new tab with webview
+  function createTab(url, name, displayName = null) {
+    const tabsContainer = $id('tabs-container');
+    const content = $id('content');
+    if (!tabsContainer || !content) { console.error('DOM missing for tabs'); return; }
+
+    let finalUrl = url || '';
+    if (!finalUrl.match(/^https?:\/\//i) && !finalUrl.startsWith('__COMMAND__')) finalUrl = 'https://' + finalUrl;
+
+    const tabId = name;
+    const tabElement = document.createElement('div');
+    tabElement.className = 'tab';
+    tabElement.id = tabId;
+
+    const tabText = displayName || (name.split('-')[0] || 'Site');
+    tabElement.innerHTML = `<span class="tab-label">${escapeHtml(tabText)}</span><span class="tab-close">&times;</span>`;
+    tabsContainer.appendChild(tabElement);
+
+    // webview
+    const webviewElement = document.createElement('webview');
+    webviewElement.className = 'webview-page';
+    webviewElement.id = `webview-${tabId}`;
+    webviewElement.src = finalUrl;
+    webviewElement.setAttribute('allowpopups','');
+    webviewElement.setAttribute('partition', `persist:${tabId}`);
+    webviewElement.style.flex = '1';
+    webviewElement.style.width = '100%';
+    webviewElement.style.height = '100%';
+
+    content.appendChild(webviewElement);
+
+    tabs[tabId] = { name: tabText, url: finalUrl, tabElement, webviewElement };
+
+    // tab click
+    tabElement.addEventListener('click', (e) => {
+      if (e.target && e.target.classList && e.target.classList.contains('tab-close')) {
+        closeTab(tabId);
+      } else {
+        switchTab(tabId);
+      }
+    });
+
+    // navigation events
+    const onDidNavigate = (event) => {
+      if (activeTabId === tabId) {
+        updateNavButtons(webviewElement);
+        try { updateUrlBar((event && event.url) ? event.url : webviewElement.getURL()); } catch(e){}
+      }
+    };
+
+    webviewElement.addEventListener('did-navigate', onDidNavigate);
+    webviewElement.addEventListener('did-navigate-in-page', onDidNavigate);
+
+    webviewElement.addEventListener('did-finish-load', () => {
+      if (activeTabId === tabId) {
+        updateNavButtons(webviewElement);
+        try { updateUrlBar(webviewElement.getURL()); } catch(e){}
+      }
+      const src = webviewElement.getURL ? webviewElement.getURL() : finalUrl;
+      if (/gemini\.google\.com|bard\.google\.com/i.test(src)) injectGeminiFix(webviewElement);
+    });
+
+    webviewElement.addEventListener('did-fail-load', (e) => {
+      console.warn('webview failed to load', e);
+    });
+
+    switchTab(tabId);
+
+    // desktop notification via preload if available
+    if (window && window.electronAPI && typeof window.electronAPI.sendNotification === 'function') {
+      window.electronAPI.sendNotification('Site Opened', `${tabText} opened successfully.`);
+    }
+  }
+
+  // Switch to a tab
+  function switchTab(tabId) {
+    if (!tabs[tabId]) return;
+
+    if (activeTabId && tabs[activeTabId]) {
+      tabs[activeTabId].tabElement.classList.remove('active');
+      if (tabs[activeTabId].webviewElement) {
+        tabs[activeTabId].webviewElement.classList.remove('active');
+        tabs[activeTabId].webviewElement.style.display = 'none';
+      }
+    }
+
+    const welcomePage = $id('welcome-page');
+    if (welcomePage) welcomePage.style.display = 'none';
+
+    tabs[tabId].tabElement.classList.add('active');
+    if (tabs[tabId].webviewElement) {
+      tabs[tabId].webviewElement.classList.add('active');
+      tabs[tabId].webviewElement.style.display = 'flex';
+    }
+    activeTabId = tabId;
+
+    setTimeout(() => {
+      updateNavButtons(tabs[tabId].webviewElement);
+      try {
+        const currentUrl = tabs[tabId].webviewElement && typeof tabs[tabId].webviewElement.getURL === 'function'
+          ? tabs[tabId].webviewElement.getURL()
+          : tabs[tabId].url;
+        updateUrlBar(currentUrl);
+      } catch (e) {
+        updateUrlBar(tabs[tabId].url);
+      }
+    }, 100);
+
+    const tabsContainer = $id('tabs-container');
+    if (tabsContainer) tabsContainer.style.display = 'flex';
+  }
+
+  // Close tab
+  function closeTab(tabId) {
+    if (!tabs[tabId]) return;
+    const closedTab = tabs[tabId];
+    try {
+      if (closedTab.tabElement && closedTab.tabElement.parentNode) closedTab.tabElement.parentNode.removeChild(closedTab.tabElement);
+      if (closedTab.webviewElement && closedTab.webviewElement.parentNode) closedTab.webviewElement.parentNode.removeChild(closedTab.webviewElement);
+    } catch (e) { console.warn('Error removing tab elements', e); }
+
+    delete tabs[tabId];
+
+    if (activeTabId === tabId) {
+      const remainingTabIds = Object.keys(tabs);
+      if (remainingTabIds.length > 0) switchTab(remainingTabIds[remainingTabIds.length - 1]);
+      else {
+        activeTabId = null;
+        const tabsContainer = $id('tabs-container');
+        if (tabsContainer) tabsContainer.style.display = 'none';
+        updateNavButtons(null);
+        updateUrlBar('');
+        const welcomePage = $id('welcome-page');
+        if (welcomePage) welcomePage.style.display = 'flex';
+      }
+    }
+  }
+
+  // Reload active tab
+  function reloadTab() {
+    if (activeTabId && tabs[activeTabId] && tabs[activeTabId].webviewElement) {
+      try { tabs[activeTabId].webviewElement.reload(); } catch(e) {}
+    }
+  }
+
+  // Show/hide add-site form
+  function showAddSiteForm() { const el = $id('add-site-form-container'); if (el) el.style.display = 'block'; }
+  function hideAddSiteForm() { const el = $id('add-site-form-container'); if (el) el.style.display = 'none'; }
+
+  // Form handling for adding site (calls preload API)
+  const addSiteForm = $id('add-site-form');
+  if (addSiteForm) {
+    addSiteForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nameInput = $id('site-name-input');
+      const urlInput = $id('site-url-input');
+      const name = nameInput ? nameInput.value.trim() : '';
+      const url = urlInput ? urlInput.value.trim() : '';
+      if (!name || !url) { alert('Please provide both name and URL.'); return; }
+      if (window && window.electronAPI && typeof window.electronAPI.addSite === 'function') {
+        window.electronAPI.addSite({ name, url });
+      }
+      if (nameInput) nameInput.value = '';
+      if (urlInput) urlInput.value = '';
+      hideAddSiteForm();
+    });
+  }
+
+  // URL bar Enter behavior -> smartCommand
+  if (urlBar) {
+    urlBar.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const raw = urlBar.value.trim();
+        if (!raw) return;
+        const result = smartCommand(raw);
+
+        // handle internal commands
+        if (result === '__COMMAND__NEW_TAB') {
+          createTab('about:blank', `tab-${Date.now()}`, 'New Tab');
+          urlBar.value = '';
+          return;
+        }
+        if (result === '__COMMAND__CLOSE_TAB') {
+          if (activeTabId) closeTab(activeTabId);
+          urlBar.value = '';
+          return;
+        }
+        if (result === '__COMMAND__CLOSE_ALL') {
+          Object.keys(tabs).forEach(id => closeTab(id));
+          urlBar.value = '';
+          return;
+        }
+
+        // If there is an active tab, load into it; else create new tab
+        if (activeTabId && tabs[activeTabId] && tabs[activeTabId].webviewElement) {
+          try {
+            // prefer loadURL if available
+            if (typeof tabs[activeTabId].webviewElement.loadURL === 'function') {
+              tabs[activeTabId].webviewElement.loadURL(result);
+            } else {
+              tabs[activeTabId].webviewElement.src = result;
+            }
+          } catch (err) {
+            tabs[activeTabId].webviewElement.src = result;
+          }
+        } else {
+          createTab(result, `tab-${Date.now()}`, raw);
+        }
+      }
+    });
+  }
+
+  // Navigation button wiring
+  if (backButton) backButton.addEventListener('click', () => {
+    if (activeTabId && tabs[activeTabId] && tabs[activeTabId].webviewElement && typeof tabs[activeTabId].webviewElement.canGoBack === 'function') {
+      try { if (tabs[activeTabId].webviewElement.canGoBack()) tabs[activeTabId].webviewElement.goBack(); } catch(e) {}
+    }
+  });
+  if (forwardButton) forwardButton.addEventListener('click', () => {
+    if (activeTabId && tabs[activeTabId] && tabs[activeTabId].webviewElement && typeof tabs[activeTabId].webviewElement.canGoForward === 'function') {
+      try { if (tabs[activeTabId].webviewElement.canGoForward()) tabs[activeTabId].webviewElement.goForward(); } catch(e) {}
+    }
+  });
+  if (reloadButton) reloadButton.addEventListener('click', reloadTab);
+
+  // Window load init
+  window.onload = () => {
+    loadSites();
+    updateNavButtons(null);
+    updateUrlBar('');
+    const tabsContainer = $id('tabs-container');
+    if (tabsContainer && tabsContainer.children.length === 0) tabsContainer.style.display = 'none';
+  };
+
+  // IPC / preload listeners
+  if (window && window.electronAPI) {
+    if (typeof window.electronAPI.onSitesData === 'function') {
+      window.electronAPI.onSitesData((data) => { renderSites(data || []); });
+    }
+    if (typeof window.electronAPI.onSiteAddedSuccessfully === 'function') {
+      window.electronAPI.onSiteAddedSuccessfully(() => {
+        if (typeof window.electronAPI.sendNotification === 'function') window.electronAPI.sendNotification('Site Added', 'Site added successfully!');
+        loadSites();
+      });
+    }
+    if (typeof window.electronAPI.onSiteDeletedSuccessfully === 'function') {
+      window.electronAPI.onSiteDeletedSuccessfully(() => {
+        if (typeof window.electronAPI.sendNotification === 'function') window.electronAPI.sendNotification('Site Deleted', 'Site deleted successfully!');
+        loadSites();
+      });
+    }
+  }
+
+  // Expose some helpers to global (optional)
+  window.helwan = { createTab, closeTab, smartCommand };
+
+  </script>
+
+  <!-- ======= Inline helpers: Clock + Notepad (preserved, تعمل مباشرة) ======= -->
+  <script>
+    // Clock (live)
+    function updateClock() {
+      const clockEl = document.getElementById('clock-display');
+      if (!clockEl) return;
+      const now = new Date();
+      clockEl.textContent = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Notepad: open/close + auto-save to localStorage
+    const notepadBtn = document.getElementById('notepad-btn');
+    const notepadContainer = document.getElementById('notepad-container');
+    const notepadText = document.getElementById('notepad-text');
+    const notepadCloseBtn = document.getElementById('notepad-close-btn');
+    const notepadClearBtn = document.getElementById('notepad-clear-btn');
+
+    function showNotepad() {
+      if (notepadContainer) notepadContainer.style.display = 'flex';
+      if (notepadText) notepadText.value = localStorage.getItem('helwan-notes') || '';
+      if (notepadContainer) notepadContainer.setAttribute('aria-hidden', 'false');
+    }
+    function hideNotepad() {
+      if (notepadContainer) notepadContainer.style.display = 'none';
+      if (notepadContainer) notepadContainer.setAttribute('aria-hidden', 'true');
+    }
+    if (notepadBtn) notepadBtn.addEventListener('click', showNotepad);
+    if (notepadCloseBtn) notepadCloseBtn.addEventListener('click', hideNotepad);
+    if (notepadClearBtn) notepadClearBtn.addEventListener('click', () => {
+      if (!confirm('Clear all notes?')) return;
+      if (notepadText) { notepadText.value = ''; localStorage.removeItem('helwan-notes'); }
+    });
+    if (notepadText) notepadText.addEventListener('input', () => { localStorage.setItem('helwan-notes', notepadText.value); });
+  </script>
 </body>
 </html>
+

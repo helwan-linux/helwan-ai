@@ -1,43 +1,46 @@
 [
   {
-    "name": "ChatGPT",
-    "url": "https://chat.openai.com"
-  },
-  {
-    "name": "Google Gemini",
-    "url": "https://bard.google.com"
-  },
-  {
-    "name": "Copilot",
-    "url": "https://copilot.microsoft.com"
-  },
-  {
-    "name": "Claude",
+    "name": "الذكاء الاصطناعي كلود",
     "url": "https://claude.ai"
   },
   {
-    "name": "Perplexity AI",
+    "name": "برنامج كوبايلوت",
+    "url": "https://copilot.microsoft.com"
+  },
+  {
+    "name": "بيربليكسيتي للبحث الذكي",
     "url": "https://www.perplexity.ai"
   },
   {
-    "name": "Poe (Quora)",
+    "name": "بوابة بو",
     "url": "https://poe.com"
   },
   {
-    "name": "Leonardo AI",
-    "url": "https://leonardo.ai"
+    "name": "جيميني من جوجل",
+    "url": "https://bard.google.com"
   },
   {
-    "name": "Midjourney",
-    "url": "https://discord.com/invite/midjourney"
+    "name": "شات جي بي تي",
+    "url": "https://chat.openai.com"
   },
   {
-    "name": "ElevenLabs",
+    "name": "إليڤن لابس للصوت",
     "url": "https://elevenlabs.io"
   },
   {
-    "name": "HeyGen",
+    "name": "ليوناردو لإنشاء الصور",
+    "url": "https://leonardo.ai"
+  },
+  {
+    "name": "ميدجورني للصور",
+    "url": "https://discord.com/invite/midjourney"
+  },
+  {
+    "name": "هيچين لإنشاء الفيديو",
     "url": "https://www.heygen.com"
+  },
+  {
+    "name": "google",
+    "url": "https://www.google.com/"
   }
- 
 ]
