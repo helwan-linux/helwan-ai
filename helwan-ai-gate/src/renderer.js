@@ -224,7 +224,8 @@ function createTab(url, name, displayName = null) {
   webviewElement.id = `webview-${tabId}`;
   webviewElement.src = finalUrl;
   webviewElement.setAttribute('allowpopups', '');
-  webviewElement.setAttribute('partition', `persist:${tabId}`);
+  //webviewElement.setAttribute('partition', `persist:${tabId}`);
+  webviewElement.setAttribute('partition', 'persist:helwan-browser');
   webviewElement.style.flex = '1';
   webviewElement.style.width = '100%';
   webviewElement.style.height = '100%';
@@ -546,3 +547,4 @@ if (window && window.electronAPI) {
 window.helwan = Object.assign(window.helwan || {}, { createTab, closeTab, smartCommand, tabs });
 
 /* نهاية الملف - لا تغييرات أخرى تمت على المنطق الأصلي، كل الإضافات في المكان المناسب وآمنة */
+
