@@ -2,7 +2,7 @@
 
 pkgname=helwan-ai-gate
 pkgver=1.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Helwan AI Gate - بوابة Electron ذكية للذكاء الاصطناعي"
 arch=('any')
 url="https://github.com/helwan-linux/helwan-ai"
