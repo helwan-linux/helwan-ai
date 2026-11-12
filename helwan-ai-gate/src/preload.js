@@ -1,16 +1,26 @@
-// preload.js
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getSites: () => ipcRenderer.send('get-sites'),
+
   addSite: (newSite) => ipcRenderer.send('add-site', newSite),
-  
-  deleteSite: (siteName) => ipcRenderer.send('delete-site', siteName), 
-  
+
+  deleteSite: (siteName) => ipcRenderer.send('delete-site', siteName),
+
   sendNotification: (title, body) => ipcRenderer.send('notify', { title, body }),
-  
-  onSitesData: (callback) => ipcRenderer.on('sites-data', (event, data) => callback(data)),
-  onSiteAddedSuccessfully: (callback) => ipcRenderer.on('site-added-successfully', () => callback()),
-  
-  onSiteDeletedSuccessfully: (callback) => ipcRenderer.on('site-deleted-successfully', () => callback()), 
+
+  onSitesData: (callback) => {
+    if (typeof callback !== 'function') return;
+    ipcRenderer.on('sites-data', (_event, data) => callback(data));
+  },
+
+  onSiteAddedSuccessfully: (callback) => {
+    if (typeof callback !== 'function') return;
+    ipcRenderer.on('site-added-successfully', () => callback());
+  },
+
+  onSiteDeletedSuccessfully: (callback) => {
+    if (typeof callback !== 'function') return;
+    ipcRenderer.on('site-deleted-successfully', () => callback());
+  }
 });
