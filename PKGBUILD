@@ -1,6 +1,6 @@
 # Maintainer: سعيد SMA <you@example.com>
 
-pkgname=helwan-ai-gate
+pkgname=hel-ai-gate
 pkgver=1.0.0
 pkgrel=3
 pkgdesc="Helwan AI Gate - بوابة Electron ذكية للذكاء الاصطناعي"
